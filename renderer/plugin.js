@@ -71,9 +71,9 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
     this._questionSetConfig = this._data.config ? JSON.parse(this._data.config.__cdata) : this._questionSetConfig;
     // this.setupNavigation();
     // Get all questions in the question set
-    var quesArray = angular.copy(data[this._constants.questionPluginId]);
-    // this._masterQuestionSet = _.isArray(quesArray) ? quesArray : _.toArray({quesArray});
-    this._masterQuestionSet = _.isArray(quesArray) ? quesArray : _.toArray(quesArray);
+    var quesArray = JSON.parse(JSON.stringify(data[this._constants.questionPluginId]));
+   //if question set have one question then convert from object to array for device issue
+    this._masterQuestionSet = _.isArray(quesArray) ? quesArray : [quesArray];
     // If this isn't the first time the question set is being rendered, restore its earlier state
     this._questionStates = {};
     this._renderedQuestions = [];
