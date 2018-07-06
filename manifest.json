@@ -115,6 +115,10 @@
       },
       {
         "type": "js",
+        "src": "renderer/utils/html_audio_plugin.js"
+      },
+      {
+        "type": "js",
         "src": "renderer/utils/qs_feedback_popup.js"
       }
     ]
