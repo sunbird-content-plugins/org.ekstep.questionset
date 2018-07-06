@@ -1,7 +1,8 @@
 var HTMLAudioPlayer = {
     _audios : {},
     _audioLimit : 25,
-    removeOldest: function() {
+    removeOldest: function() { 
+        //equvalent of _.sortBy(this._audios['lastUsed'])  and removes first one in _audios)
         var oldestAudio = Object.keys(this._audios)[0];
         for(var audio in this._audios) {
             if(this._audios[audio].lastUsed < this._audios[oldestAudio].lastUsed){
