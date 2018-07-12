@@ -34,7 +34,7 @@ QSTelemetryLogger.logResponse = function(data) {
       "ver": this._plugin._manifest.ver ? this._plugin._manifest.ver : "1.0",
       "type": this._plugin._manifest.type ? this._plugin._manifest.type : "plugin"
     },
-    "type": data.type,
+    "optionTag": data.type,
     "res": data.values
   };
   TelemetryService.itemResponse(edata);
