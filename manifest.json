@@ -103,14 +103,6 @@
     "dependencies": [
       {
         "type": "js",
-        "src": "renderer/controller/questionset_ctrl.js"
-      },
-      {
-        "type": "js",
-        "src": "renderer/templates/questionset_template.html"
-      },
-      {
-        "type": "js",
         "src": "renderer/utils/telemetry_logger.js"
       },
       {
