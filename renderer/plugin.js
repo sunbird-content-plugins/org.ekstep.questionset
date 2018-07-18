@@ -83,7 +83,7 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
       this._renderedQuestions = savedQSState.renderedQuestions;
       question = savedQSState.currentQuestion;
       this._questionStates = savedQSState.questionStates;
-      this._currentQuestionState = this.getQuestionState(this._currentQuestion.id);
+      this._currentQuestionState = this.getQuestionState(question.id);
     } else {
       question = this.getNextQuestion();
     }
