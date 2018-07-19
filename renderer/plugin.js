@@ -120,6 +120,7 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
       // Set current question for telmetry to log events from question-unit
       QSTelemetryLogger.setQuestion(instance._currentQuestion, instance.getRenderedIndex()); // eslint-disable-line no-undef
       this.setRendered(question);
+      this.saveQuestionSetState();
       EkstepRendererAPI.dispatchEvent(question.pluginId + ':show', instance);
     }
   },
