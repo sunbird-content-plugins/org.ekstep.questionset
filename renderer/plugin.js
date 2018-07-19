@@ -83,7 +83,7 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
       this._renderedQuestions = savedQSState.renderedQuestions;
       question = savedQSState.currentQuestion;
       this._questionStates = savedQSState.questionStates;
-      this._currentQuestionState = this.getQuestionState(this._currentQuestion.id);
+      this._currentQuestionState = this.getQuestionState(question.id);
     } else {
       question = this.getNextQuestion();
     }
@@ -93,6 +93,8 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
   },
   renderQuestion: function(question) {
     var instance = this;
+    // Mark the question as rendered
+    instance._currentQuestion = question;
     // If this is not the first question, hide the current question
     if (instance._currentQuestion) {
       EkstepRendererAPI.dispatchEvent(instance._currentQuestion.pluginId + ':hide', instance);
@@ -101,8 +103,6 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
     if (question.pluginId === this._constants.qsQuizPlugin) {
       //if question is quiz then remove question set div
       this.removeTemplateContainer();
-      // Mark the question as rendered
-      instance._currentQuestion = question;
       this.setRendered(question);
       // Set current question for telmetry to log events from question-unit
       QSTelemetryLogger.setQuestion(instance._currentQuestion, instance.getRenderedIndex()); // eslint-disable-line no-undef
@@ -117,8 +117,6 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
       // For V2 questions, load the AngularJS template and controller and invoke the event to render the question
       // Fetch the question state if it was already rendered before
       this._currentQuestionState = this.getQuestionState(question.id);
-      // Mark the question as rendered
-      instance._currentQuestion = question;
       // Set current question for telmetry to log events from question-unit
       QSTelemetryLogger.setQuestion(instance._currentQuestion, instance.getRenderedIndex()); // eslint-disable-line no-undef
       this.setRendered(question);
