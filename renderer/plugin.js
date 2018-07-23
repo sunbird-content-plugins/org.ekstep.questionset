@@ -13,6 +13,7 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
     'shuffle_questions': false
   },
   _masterQuestionSet: [],
+  _itemIndex: -1,
   _renderedQuestions: [],
   _questionStates: {},
   _firstQuestion: false,
@@ -46,12 +47,28 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
   _questionUnitPlugins: [],
   initPlugin: function(data) {
     var instance = this;
+
+    /**
+     * TODO: Remove the following FIX.
+     * The following fix is applied to remove duplicate naviagtion registrations by questionset plugin.
+     * This can be removed after https://github.com/ekstep/CE-Core-Plugins/pull/1262 is deployed.
+     */
+
+    org.ekstep.pluginframework.pluginManager.plugins['org.ekstep.navigation'].p.prototype._customNavigationPlugins = org.ekstep.pluginframework.pluginManager.plugins['org.ekstep.navigation'].p.prototype._customNavigationPlugins.filter(function(p) {
+      return p && (p.id != instance._data.id);
+    });
+
+    /**
+     * End of FIX
+     */
+
+    // De-Register for any existing navigation hooks (replay scenario)
+    this.deregisterNavigation(instance);
     // Register for navigation hooks
     this.registerNavigation(instance);
     // On content replay, reset all question set information.
     EkstepRendererAPI.addEventListener('renderer:content:replay', function() {
-      instance.resetQS.call(instance);
-      this.registerNavigation(instance);
+      instance.resetQS();
     }, instance);
     // Remove duplicate event listener
     EventBus.listeners['org.ekstep.questionset:feedback:retry'] = [];
@@ -72,7 +89,7 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
     // this.setupNavigation();
     // Get all questions in the question set
     var quesArray = JSON.parse(JSON.stringify(data[this._constants.questionPluginId]));
-   //if question set have one question then convert from object to array for device issue
+    //if question set have one question then convert from object to array for device issue
     this._masterQuestionSet = _.isArray(quesArray) ? quesArray : [quesArray];
     // If this isn't the first time the question set is being rendered, restore its earlier state
     this._questionStates = {};
@@ -84,8 +101,14 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
       question = savedQSState.currentQuestion;
       this._questionStates = savedQSState.questionStates;
       this._currentQuestionState = this.getQuestionState(question.id);
+      this._itemIndex = savedQSState.itemIndex >= 0 ? savedQSState.itemIndex : -1;
     } else {
       question = this.getNextQuestion();
+    }
+    if(this._itemIndex > 0){
+      setTimeout(function() {
+        EventBus.dispatch("renderer:previous:enable");
+      }, 500);
     }
     this.saveQuestionSetState();
     // Render the question
@@ -163,7 +186,7 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
           // If show_feedback is set to false, move to next question without displaying feedback popup
           instance.renderNextQuestion();
         }
-      });
+      }, this);
     } else {
       this._displayedPopup = false;
       instance.renderNextQuestion();
@@ -197,7 +220,6 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
       this.saveQuestionSetState();
       this.generateNavigateTelemetry('next', 'ContentApp-EndScreen');
       EkstepRendererAPI.dispatchEvent(this._currentQuestion.pluginId + ':hide', instance);
-      // this.resetNavigation();
       this.resetListeners();
       this.resetTemplates();
       if (!this._displayedPopup) {
@@ -304,7 +326,8 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
       masterQuestionSet: this._masterQuestionSet,
       renderedQuestions: this._renderedQuestions,
       currentQuestion: this._currentQuestion,
-      questionStates: this._questionStates
+      questionStates: this._questionStates,
+      itemIndex: this._itemIndex
     };
     Renderer.theme.setParam(this._data.id, JSON.parse(JSON.stringify(qsState)));
   },
@@ -313,10 +336,9 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
     jQuery(this._constants.qsElement).remove();
   },
   resetQS: function() {
-    // this.resetNavigation();
     var instance = this;
     Renderer.theme.setParam(this._data.id, undefined);
-    this.deregisterNavigation(instance);
+    this.removeDuplicateEventListeners('renderer:content:replay', instance._data.id);
     setTimeout(function() {
       instance.resetListeners();
     }, 100);
@@ -365,6 +387,14 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
   },
   handlePrevious: function() {
     this.prevQuestion();
+  },
+  removeDuplicateEventListeners: function(event, id) {
+    EventBus.listeners[event] = EventBus.listeners[event].filter(function(e) {
+      if(e.scope && e.scope.id) {
+        return e.scope.id != id;
+      }
+      return true;
+    });
   }
 });
 //# sourceURL=questionSetRenderer.js
