@@ -1,3 +1,15 @@
+angular.module('editorApp').config(['$locationProvider', '$sceDelegateProvider', function($locationProvider, $sceDelegateProvider) {
+
+  $sceDelegateProvider.resourceUrlWhitelist([
+
+    'self',
+
+    'https://localhost:8081/**'
+
+  ]);
+
+}]);
+
 /**
  *
  * Plugin to create question set and add it to stage.
