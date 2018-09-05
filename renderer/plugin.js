@@ -29,7 +29,7 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
     questionsetCSS: {
       width: '100%',
       position: 'absolute',
-      top: '2%',
+      top: '0%',
       left: 0,
       height: '100%'
     },
