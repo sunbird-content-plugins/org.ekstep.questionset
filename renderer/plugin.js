@@ -128,7 +128,7 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
       instance._currentQuestion = question;
       this.setRendered(question);
       // Set current question for telmetry to log events from question-unit
-      QSTelemetryLogger.setQuestion(instance._currentQuestion, instance.getRenderedIndex()); // eslint-disable-line no-undef
+      QSTelemetryLogger.setQuestion(instance._currentQuestion, instance.getRenderedIndex()+1); // eslint-disable-line no-undef
       setTimeout(function() {
         Renderer.update = true;
       }, 500);
@@ -143,9 +143,9 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
       // Mark the question as rendered
       instance._currentQuestion = question;
       // Set current question for telmetry to log events from question-unit
-      QSTelemetryLogger.setQuestion(instance._currentQuestion, instance.getRenderedIndex()); // eslint-disable-line no-undef
       this.setRendered(question);
       this.saveQuestionSetState();
+      QSTelemetryLogger.setQuestion(instance._currentQuestion, instance.getRenderedIndex()+1); // eslint-disable-line no-undef
       EkstepRendererAPI.dispatchEvent(question.pluginId + ':show', instance);
     }
   },
