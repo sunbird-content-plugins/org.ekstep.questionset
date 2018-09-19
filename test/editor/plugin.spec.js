@@ -1,10 +1,198 @@
 describe("EditorPlugin", function() {
 
-  var plugin, fabricGroup, v1Data, v2Data, v2Data1;
+  var plugin, fabricGroup, v1Data, v2Data, v2Data1, qsManifest, searchResp, searchService;
 
   beforeEach(function() {
     plugin = new org.ekstep.questionset.EditorPlugin({}, {}, {});
     fabricGroup = new fabric.Group();
+    qsManifest = {
+      "id": "org.ekstep.questionset",
+      "ver": "1.0",
+      "author": "Manoj Chandrashekar",
+      "title": "Question Set Plugin",
+      "description": "Plugin to add question set to content",
+      "publishedDate": "",
+      "editor": {
+        "main": "editor/plugin.js",
+        "dependencies": [
+          {
+            "type": "plugin",
+            "plugin": "org.ekstep.question",
+            "ver": "1.0"
+          },
+          {
+            "type": "plugin",
+            "plugin": "org.ekstep.questionbank",
+            "ver": "1.0"
+          },
+          {
+            "type": "plugin",
+            "plugin": "org.ekstep.questionset.quiz",
+            "ver": "1.0"
+          },
+          {
+            "type": "plugin",
+            "plugin": "org.ekstep.questionset.preview",
+            "ver": "1.0"
+          }
+        ],
+        "menu": [
+          {
+            "id": "question-set",
+            "category": "main",
+            "type": "icon",
+            "toolTip": "Add Question Set",
+            "title": "Question Set",
+            "iconClass": "icon-questions icon",
+            "onclick": {
+              "id": "org.ekstep.questionset:showPopup"
+            }
+          }
+        ],
+        "configManifest": [
+          {
+            "PropertyName": "btn_edit",
+            "title": "Edit question set",
+            "description": "Choose a question from the question bank",
+            "dataType": "button",
+            "valueType": "text",
+            "required": true,
+            "onclick": {
+              "id": "org.ekstep.questionset:showPopup",
+              "type": "questionset"
+            }
+          },
+          {
+            "propertyName": "title",
+            "title": "Question Set Title",
+            "description": "Question Set Title",
+            "dataType": "input",
+            "valueType": "text",
+            "required": true
+          },
+          {
+            "propertyName": "shuffle_questions",
+            "title": "Shuffle Questions",
+            "description": "Shuffle the Questions",
+            "dataType": "boolean",
+            "required": true
+          },
+          {
+            "propertyName": "show_feedback",
+            "title": "Show Immediate Feedback",
+            "description": "Show the feedback popup",
+            "dataType": "boolean",
+            "required": true
+          },
+          {
+            "propertyName": "total_items",
+            "title": "Display",
+            "description": "Total questions to display",
+            "dataType": "input",
+            "valueType": "number",
+            "required": true,
+            "minimumValue": "0"
+          },
+          {
+            "propertyName": "max_score",
+            "title": "Total Marks",
+            "description": "Maximum score",
+            "dataType": "input",
+            "valueType": "number",
+            "required": true,
+            "minimumValue": "1",
+            "maximumValue": "99"
+          }
+        ]
+      },
+      "renderer": {
+        "main": "renderer/plugin.js",
+        "dependencies": [
+          {
+            "type": "js",
+            "src": "renderer/utils/telemetry_logger.js"
+          },
+          {
+            "type": "js",
+            "src": "renderer/utils/html_audio_plugin.js"
+          },
+          {
+            "type": "js",
+            "src": "renderer/utils/qs_feedback_popup.js"
+          }
+        ]
+      },
+      "dependencies": [
+        {
+          "plugin": "org.ekstep.questionset.quiz",
+          "ver": "1.0",
+          "type": "plugin",
+          "scope": "renderer"
+        },
+        {
+          "type": "plugin",
+          "plugin": "org.ekstep.iterator",
+          "ver": "1.0",
+          "scope": "renderer"
+        }
+      ]
+    };
+    searchResp = {
+      "data": {
+        "id": "ekstep.composite-search.search",
+        "ver": "3.0",
+        "ts": "2018-09-18T07:28:02ZZ",
+        "params": {
+          "resmsgid": "b31ff1af-7c58-402b-a474-639a389d8e49",
+          "msgid": null,
+          "err": null,
+          "status": "successful",
+          "errmsg": null
+        },
+        "responseCode": "OK",
+        "result": {
+          "count": 5,
+          "content": [
+            {
+              "identifier": "org.ekstep.questionunit.mcq",
+              "appIcon": "https://ekstep-public-qa.s3-ap-south-1.amazonaws.com/content/org.ekstep.questionunit.mcq/artifact/assetsmcq-horizontal_805_1529387605_1529387605429.thumb.png",
+              "semanticVersion": "1.1",
+              "contentType": "Plugin",
+              "objectType": "Content"
+            },
+            {
+              "identifier": "org.ekstep.questionunit.mtf",
+              "appIcon": "https://ekstep-public-qa.s3-ap-south-1.amazonaws.com/content/org.ekstep.questionunit.mtf/artifact/assetsimage-2018-06-08_1_805_1528451134_1528451134793.thumb.png",
+              "semanticVersion": "1.1",
+              "contentType": "Plugin",
+              "objectType": "Content"
+            },
+            {
+              "identifier": "org.ekstep.questionunit.ftb",
+              "appIcon": "https://ekstep-public-qa.s3-ap-south-1.amazonaws.com/content/org.ekstep.questionunit.ftb/artifact/assetsimage-2018-06-08_805_1533130614_1533130614398.thumb.png",
+              "semanticVersion": "1.0",
+              "contentType": "Plugin",
+              "objectType": "Content"
+            },
+            {
+              "identifier": "org.ekstep.questionunit.reorder",
+              "appIcon": "https://ekstep-public-qa.s3-ap-south-1.amazonaws.com/content/org.ekstep.questionunit.reorder/artifact/assetsreorder-preview_725_1536562584_1536562584692.thumb.png",
+              "semanticVersion": "1.0",
+              "contentType": "Plugin",
+              "objectType": "Content"
+            },
+            {
+              "identifier": "org.ekstep.questionunit.sequence",
+              "appIcon": "https://ekstep-public-qa.s3-ap-south-1.amazonaws.com/content/org.ekstep.questionunit.sequence/artifact/assetssequencial-preview_786_1536564290_1536564290560.thumb.png",
+              "semanticVersion": "1.0",
+              "contentType": "Plugin",
+              "objectType": "Content"
+            }
+          ]
+        },
+        "responseTime": 413
+      }
+    };
     v2Data = [{ "template": "NA", "itemType": "UNIT", "code": "NA", "subject": "domain", "qlevel": "EASY", "channel": "in.ekstep", "description": "test", "language": ["English"], "type": "mcq", "title": "test image and audio for the image", "body": "{\"data\":{\"plugin\":{\"id\":\"org.ekstep.questionunit.mcq\",\"version\":\"1.0\",\"templateId\":\"horizontalMCQ\"},\"data\":{\"question\":{\"text\":\"test image and audio for the image\",\"image\":\"/assets/public/content/2_1466487176189.jpg\",\"audio\":\"\",\"hint\":\"\"},\"options\":[{\"text\":\"test1\",\"image\":\"\",\"audio\":\"/assets/public/content/145503359952511.mp3\",\"hint\":\"\",\"isCorrect\":true,\"$$hashKey\":\"object:3278\"},{\"text\":\"test2\",\"image\":\"/assets/public/content/2_1466487176189.jpg\",\"audio\":\"\",\"hint\":\"\",\"isCorrect\":false,\"$$hashKey\":\"object:3279\"}],\"media\":[{\"id\":566752436,\"src\":\"/assets/public/content/2_1466487176189.jpg\",\"assetId\":\"do_20072814\",\"type\":\"image\",\"preload\":false},{\"id\":576331075,\"src\":\"/assets/public/content/2_1466487176189.jpg\",\"assetId\":\"do_20072814\",\"type\":\"image\",\"preload\":false},{\"id\":94711675,\"src\":\"/assets/public/content/145503359952511.mp3\",\"assetId\":\"11_sound\",\"type\":\"audio\",\"preload\":false}]},\"config\":{\"metadata\":{\"category\":\"MCQ\",\"title\":\"test image and audio for the image\",\"language\":[\"English\"],\"qlevel\":\"EASY\",\"gradeLevel\":[\"Kindergarten\"],\"concepts\":[\"BIO3\"],\"description\":\"test\",\"max_score\":1},\"max_time\":0,\"max_score\":1,\"partial_scoring\":false,\"layout\":\"Horizontal\",\"isShuffleOption\":false},\"media\":[{\"id\":566752436,\"src\":\"/assets/public/content/2_1466487176189.jpg\",\"assetId\":\"do_20072814\",\"type\":\"image\",\"preload\":false},{\"id\":576331075,\"src\":\"/assets/public/content/2_1466487176189.jpg\",\"assetId\":\"do_20072814\",\"type\":\"image\",\"preload\":false},{\"id\":94711675,\"src\":\"/assets/public/content/145503359952511.mp3\",\"assetId\":\"11_sound\",\"type\":\"audio\",\"preload\":false}]}}", "createdOn": "2018-03-23T10:15:24.824+0000", "gradeLevel": ["Grade 1"], "appId": "ekstep_portal", "options": [{ "answer": true, "value": { "type": "text", "asset": "1", "resvalue": 0, "resindex": 0 } }], "lastUpdatedOn": "2018-03-23T10:15:24.824+0000", "identifier": "do_112466586622558208121", "question": "test image and audio for the image", "consumerId": "f6878ac4-e9c9-4bc4-80be-298c5a73b447", "version": 2, "versionKey": "1521800124824", "createdBy": "580", "max_score": 1, "name": "test image and audio for the image", "template_id": "NA", "category": "MCQ", "status": "Live", "$$hashKey": "object:2719", "isSelected": true }];
     v2Data1 = [{ "body": "{\"data\":{\"plugin\":{\"id\":\"org.ekstep.questionunit.mcq\",\"version\":\"1.0\",\"templateId\":\"horizontalMCQ\"},\"data\":{\"question\":{\"text\":\"test image and audio for the image\",\"image\":\"/assets/public/content/2_1466487176189.jpg\",\"audio\":\"\",\"hint\":\"\"},\"options\":[{\"text\":\"test1\",\"image\":\"\",\"audio\":\"/assets/public/content/145503359952511.mp3\",\"hint\":\"\",\"isCorrect\":true,\"},{\"text\":\"test2\",\"image\":\"/assets/public/content/2_1466487176189.jpg\",\"audio\":\"\",\"hint\":\"\",\"isCorrect\":false,\"}]},\"config\":{\"metadata\":{\"category\":\"MCQ\",\"title\":\"test image and audio for the image\",\"language\":[\"English\"],\"qlevel\":\"EASY\",\"gradeLevel\":[\"Kindergarten\"],\"concepts\":[\"BIO3\"],\"description\":\"test\",\"max_score\":1},\"max_time\":0,\"max_score\":1,\"partial_scoring\":false,\"layout\":\"Horizontal\",\"isShuffleOption\":false},\"}}", "createdOn": "2018-03-23T10:15:24.824+0000", "gradeLevel": ["Grade 1"], "appId": "ekstep_portal", "options": [{ "answer": true, "value": { "type": "text", "asset": "1", "resvalue": 0, "resindex": 0 } }], "identifier": "do_112466586622558208121", "question": "test", "consumerId": "f6878ac4-e9c9-4bc4-80be-298c5a73b447", "version": 2, "versionKey": "1521800124824", "createdBy": "580", "max_score": 1, "name": "test image and audio for the image", "template_id": "NA", "category": "MCQ", "isSelected": true }];
     v1Data = [{ "template": [{ "text": { "event": { "action": [{ "asset_model": "item.question_audio", "sound": true, "type": "command", "command": "stop" }, { "asset_model": "item.question_audio", "type": "command", "command": "play" }], "type": "click" }, "color": "#4c4c4c", "w": 100, "h": 15, "x": 0, "fontsize": "3vw", "y": 10, "lineHeight": 1.4, "model": "item.question", "valign": "top", "align": "center" }, "shape": { "event": { "action": [{ "asset_model": "item.question_audio", "sound": true, "type": "command", "command": "stop" }, { "asset_model": "item.question_audio", "type": "command", "command": "play" }], "type": "click" }, "hitArea": true, "w": 100, "h": 24, "x": 0, "y": 10, "type": "rect" }, "g": [{ "placeholder": [{ "model-count": "item.optionCount1", "w": 30, "h": 100, "x": 0, "y": 0, "valign": "middle", "align": "center", "type": "gridLayout", "model-asset": "item.question_image" }, { "model-count": "item.optionCount2", "w": 30, "h": 100, "x": 40, "y": 0, "valign": "middle", "align": "center", "type": "gridLayout", "model-asset": "item.question_image" }], "text": [{ "color": "#4c4c4c", "w": 5, "h": 0, "x": 32, "fontsize": "3vw", "y": 55, "model": "item.operator1", "valign": "middle", "align": "center" }, { "color": "#4c4c4c", "w": 5, "h": 0, "x": 72, "fontsize": "3vw", "y": 55, "model": "item.operator2", "valign": "middle", "align": "center" }, { "z-index": 30, "color": "#4c4c4c", "w": 20, "h": 40, "x": 80, "fontsize": "3vw", "y": 38, "model": "item.ans1", "valign": "middle", "id": "newText1", "align": "center" }], "g": { "shape": { "w": 100, "h": 100, "x": 0, "y": 0, "stroke-width": 3, "fill": "#FFFFA5", "type": "roundrect", "stroke": "#719ECE" }, "z-index": 20, "w": 20, "h": 40, "x": 80, "y": 34, "id": "textshape1" }, "w": 100, "h": 32, "x": 0, "y": 33 }, { "nkeyboard": { "keys": "item.keys", "w": 100, "h": 25, "limit": 7, "x": 0, "y": 82, "id": "bKeyboard", "type": "custom", "target": "newText1" }, "w": 100, "h": 100, "x": 0, "y": 0 }], "id": "Operations_with_images" }], "itemType": "UNIT", "code": "org.ekstep.assessmentitem.literacy_5abb516b8f224", "subject": "domain", "qlevel": "EASY", "channel": "in.ekstep", "description": "", "language": ["English"], "media": [{ "id": "do_11246090113921843213", "type": "image", "src": "https://dev.ekstep.in/assets/public/content/do_11246090113921843213/artifact/ae36d87ad0aa9438984018205a9c0fa0_1521106096238.jpeg", "asset_id": "do_11246090113921843213" }], "type": "ftb", "title": "v1 - operations with images", "createdOn": "2018-03-28T08:25:15.611+0000", "gradeLevel": ["Kindergarten"], "appId": "ekstep_portal", "question_image": "do_11246090113921843213", "lastUpdatedOn": "2018-03-28T08:25:15.611+0000", "used_for": "worksheet", "model": { "optionCount1": "4", "optionCount2": "3", "operator1": "-", "operator2": "=", "keys": "0,1,2,3,4,5,6,7,8,9,+,-,×,÷,=,<,>,/,." }, "lastUpdatedBy": "597", "identifier": "do_112470071423893504143", "question": "v1 - operations with images", "consumerId": "f6878ac4-e9c9-4bc4-80be-298c5a73b447", "version": 1, "versionKey": "1522225515611", "answer": { "ans1": { "value": "1", "score": 1 } }, "concepts": [{ "identifier": "LO4", "name": "Understanding of Grammar/Syntax", "objectType": "Concept", "relation": "associatedTo", "description": null, "index": null, "status": null, "depth": null, "mimeType": null, "visibility": null, "compatibilityLevel": null }], "createdBy": "597", "max_score": 1, "domain": ["literacy"], "name": "v1 - operations with images", "template_id": "do_112470023566245888128", "category": "MCQ", "status": "Live", "isSelected": true, "mediamanifest": { "media": [{ "id": "do_11246090113921843213", "type": "image", "src": "https://dev.ekstep.in/assets/public/content/do_11246090113921843213/artifact/ae36d87ad0aa9438984018205a9c0fa0_1521106096238.jpeg", "asset_id": "do_11246090113921843213" }, { "src": "https://dev.ekstep.in/assets/public/content/do_112470023566245888128/assets/1522219674003/customnumkeyboard.js", "id": "nkeyboard", "type": "plugin", "plugin": "org.ekstep.questionset", "ver": "1.0" }, { "src": "https://dev.ekstep.in/assets/public/content/do_112470023566245888128/assets/1522219674010/numerickeyboard.css", "id": "keyboard_css", "type": "css", "plugin": "org.ekstep.questionset", "ver": "1.0" }] } }];
@@ -35,6 +223,19 @@ describe("EditorPlugin", function() {
     });
     spyOn(plugin, "onConfigChange").and.callThrough();
     spyOn(ecEditor, 'render');
+    spyOn(org.ekstep.pluginframework.pluginManager, "getPluginManifest").and.callFake(function() {
+      return qsManifest;
+    });
+    spyOn(org.ekstep.pluginframework.pluginManager, "loadAllPlugins").and.callFake(function() {
+      return true;
+    });
+    spyOn(plugin, "loadQSPlugins").and.callThrough();
+    searchService = jasmine.createSpyObj("search", ["pluginsSearch"]);
+    spyOn(ecEditor, "getService").and.callFake(function() {
+        return searchService;
+    });
+    spyOn(plugin, "pluginsRespHandler").and.callThrough();
+    spyOn(plugin, "getplugins").and.callThrough();
   });
 
   describe("initialize", function() {
@@ -61,7 +262,7 @@ describe("EditorPlugin", function() {
     it('should call add media', function() {
       plugin.newInstance();
 
-      expect(plugin.addMedia.calls.count()).toBe(5);
+      expect(plugin.addMedia.calls.count()).toBe(7);
     });
 
     it('should call getPropsForEditor', function() {
@@ -91,7 +292,7 @@ describe("EditorPlugin", function() {
     it('should call add media', function() {
       plugin.newInstance();
 
-      expect(plugin.addMedia.calls.count()).toBe(1);
+      expect(plugin.addMedia.calls.count()).toBe(3);
     });
   });
 
@@ -241,6 +442,13 @@ describe("EditorPlugin", function() {
       plugin.onConfigChange("btn_edit", "Edit");
       expect(ecEditor.dispatchEvent).toHaveBeenCalledWith('delete:invoke');
     });
+  });
+  
+  describe('load question set plugins', function() {
+    it("loadQSPlugins", function(){
+      plugin.pluginsRespHandler(searchResp.data.result.content);
+      expect(org.ekstep.pluginframework.pluginManager.loadAllPlugins).toHaveBeenCalled();
+    })
   });
 
 });
