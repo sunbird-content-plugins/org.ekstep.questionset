@@ -1,6 +1,6 @@
 {
   "id": "org.ekstep.questionset",
-  "ver": "1.0",
+  "ver": "1.1",
   "author": "Manoj Chandrashekar",
   "title": "Question Set Plugin",
   "description": "Plugin to add question set to content",
@@ -11,22 +11,22 @@
       {
         "type": "plugin",
         "plugin": "org.ekstep.question",
-        "ver": "1.0"
+        "ver": "1.1"
       },
       {
         "type": "plugin",
         "plugin": "org.ekstep.questionbank",
-        "ver": "1.0"
+        "ver": "1.1"
       },
       {
         "type": "plugin",
         "plugin": "org.ekstep.questionset.quiz",
-        "ver": "1.0"
+        "ver": "1.1"
       },
       {
         "type": "plugin",
         "plugin": "org.ekstep.questionset.preview",
-        "ver": "1.0"
+        "ver": "1.1"
       },{
         "type":"css",
         "src":"editor/style/style.css"
@@ -121,7 +121,7 @@
   "dependencies": [
     {
       "plugin": "org.ekstep.questionset.quiz",
-      "ver": "1.0",
+      "ver": "1.1",
       "type": "plugin",
       "scope": "renderer"
     },
