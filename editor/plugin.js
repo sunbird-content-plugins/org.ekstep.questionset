@@ -204,7 +204,7 @@ org.ekstep.questionset.EditorPlugin = org.ekstep.contenteditor.basePlugin.extend
             id: UUID(),
             type: question.type,
             pluginId: instance._constants.v1PluginId,
-            pluginVer: parseFloat(question.version) == 1.1 ? "1.1" : question.version.toString(),
+            pluginVer: (question.version === 1) ? '1.1' : question.version.toString(),
             templateId: instance._constants.templateId,
             data: {
               __cdata: instance.createEcmlStructureV1(question)
