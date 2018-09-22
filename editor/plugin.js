@@ -27,7 +27,7 @@ org.ekstep.questionset.EditorPlugin = org.ekstep.contenteditor.basePlugin.extend
 
     //Load dependecny plugin
     var publishedDate = new Date().getTime();
-    ecEditor.loadAndInitPlugin(instance._dependencyPlugin, "1.0", publishedDate);
+    ecEditor.loadAndInitPlugin(instance._dependencyPlugin, "1.1", publishedDate);
     //Loading question unit plugins(MCQ,FTB and MTF) which all having target id 'org.ekstep.questionset'
     this.loadQSPlugins();
     //Get loaded plugins
