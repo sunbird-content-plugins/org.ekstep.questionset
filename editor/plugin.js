@@ -27,7 +27,7 @@ org.ekstep.questionset.EditorPlugin = org.ekstep.contenteditor.basePlugin.extend
 
     //Load dependecny plugin
     var publishedDate = new Date().getTime();
-    ecEditor.loadAndInitPlugin(instance._dependencyPlugin, "1.0", publishedDate);
+    ecEditor.loadAndInitPlugin(instance._dependencyPlugin, "1.1", publishedDate);
     //Loading question unit plugins(MCQ,FTB and MTF) which all having target id 'org.ekstep.questionset'
     this.loadQSPlugins();
     //Get loaded plugins
@@ -104,25 +104,6 @@ org.ekstep.questionset.EditorPlugin = org.ekstep.contenteditor.basePlugin.extend
       instance.editorObj.scaleToWidth(props.w);
       instance.postInit();
     }, props);
-
-
-    //Add MCQ zoom and audio can to stage
-    var audioIcon = ecEditor.resolvePluginResource("org.ekstep.questionunit.mcq", "1.0", 'renderer/assets/audio-icon.png');
-    instance.addMedia({
-      id: "audioIcon",
-      src: audioIcon,
-      assetId: "audioIcon",
-      type: "image",
-      preload: true
-    });
-    var zoomIcon = ecEditor.resolvePluginResource("org.ekstep.questionunit.mcq", "1.0", 'renderer/assets/expand-icon.png');
-    instance.addMedia({
-      id: "zoomIcon",
-      src: zoomIcon,
-      assetId: "zoomIcon",
-      type: "image",
-      preload: true
-    });
     //Getting numberf questions for assessment summary : testing purpose
     //instance.getSummary();//Testing
   },
@@ -204,7 +185,7 @@ org.ekstep.questionset.EditorPlugin = org.ekstep.contenteditor.basePlugin.extend
             id: UUID(),
             type: question.type,
             pluginId: instance._constants.v1PluginId,
-            pluginVer: (question.version === 1) ? '1.0' : question.version.toString(),
+            pluginVer: (question.version === 1) ? '1.1' : question.version.toString(),
             templateId: instance._constants.templateId,
             data: {
               __cdata: instance.createEcmlStructureV1(question)
