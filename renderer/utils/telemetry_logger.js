@@ -31,7 +31,7 @@ QSTelemetryLogger.logResponse = function(data) {
   var edata = {
     "target": {
       "id": this._plugin._manifest.id ? this._plugin._manifest.id : "",
-      "ver": this._plugin._manifest.ver ? this._plugin._manifest.ver : "1.1",
+      "ver": this._plugin._manifest.ver ? this._plugin._manifest.ver : "1.0",
       "type": this._plugin._manifest.type ? this._plugin._manifest.type : "plugin"
     },
     "optionTag": data.type,
