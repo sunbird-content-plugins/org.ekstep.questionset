@@ -79,21 +79,25 @@ QSTelemetryLogger.logAssessEnd = function(result) {
   TelemetryService.assessEnd(this._assessStart, data);
 };
 QSTelemetryLogger.logEvent = function(type, data) {
-  switch (type.toUpperCase()) {
-    case this.EVENT_TYPES.TOUCH:
-      this.logInteract(data);
-      break;
-    case this.EVENT_TYPES.ASSESS:
-      this.logAssess();
-      break;
-    case this.EVENT_TYPES.RESPONSE:
-      this.logResponse(data);
-      break;
-    case this.EVENT_TYPES.ASSESSEND:
-      this.logAssessEnd(data);
-      break;
-    case 'DEFAULT':
-      return true;
+  try {
+    switch (type.toUpperCase()) {
+      case this.EVENT_TYPES.TOUCH:
+        this.logInteract(data);
+        break;
+      case this.EVENT_TYPES.ASSESS:
+        this.logAssess();
+        break;
+      case this.EVENT_TYPES.RESPONSE:
+        this.logResponse(data);
+        break;
+      case this.EVENT_TYPES.ASSESSEND:
+        this.logAssessEnd(data);
+        break;
+      case 'DEFAULT':
+        return true;
+    }
+  } catch (e) {
+    console.log("telemetry_logger -> logEvent()", e);
   }
 };
 //# sourceURL=telemetryLogger.js
