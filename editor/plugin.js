@@ -10,6 +10,7 @@
 org.ekstep.questionset = {};
 org.ekstep.questionset.EditorPlugin = org.ekstep.contenteditor.basePlugin.extend({
   type: "org.ekstep.questionset",
+  _plugins : [],
   _questions: [],
   _questionPlugin: 'org.ekstep.question',
   _constants: {
@@ -26,7 +27,11 @@ org.ekstep.questionset.EditorPlugin = org.ekstep.contenteditor.basePlugin.extend
 
     //Load dependecny plugin
     var publishedDate = new Date().getTime();
-    ecEditor.loadAndInitPlugin(instance._dependencyPlugin, "1.0", publishedDate);
+    ecEditor.loadAndInitPlugin(instance._dependencyPlugin, "1.1", publishedDate);
+    //Loading question unit plugins(MCQ,FTB and MTF) which all having target id 'org.ekstep.questionset'
+    this.loadQSPlugins();
+    //Get loaded plugins
+    ecEditor.addEventListener(this.manifest.id + ":getPlugins", this.getplugins, this);
 
     ecEditor.addEventListener(instance.manifest.id + ":showPopup", instance.openQuestionBank, instance);
     ecEditor.addEventListener(instance.manifest.id + ":addQS", instance.addQS, instance);
@@ -99,25 +104,6 @@ org.ekstep.questionset.EditorPlugin = org.ekstep.contenteditor.basePlugin.extend
       instance.editorObj.scaleToWidth(props.w);
       instance.postInit();
     }, props);
-
-
-    //Add MCQ zoom and audio can to stage
-    var audioIcon = ecEditor.resolvePluginResource("org.ekstep.questionunit.mcq", "1.0", 'renderer/assets/audio-icon.png');
-    instance.addMedia({
-      id: "audioIcon",
-      src: audioIcon,
-      assetId: "audioIcon",
-      type: "image",
-      preload: true
-    });
-    var zoomIcon = ecEditor.resolvePluginResource("org.ekstep.questionunit.mcq", "1.0", 'renderer/assets/expand-icon.png');
-    instance.addMedia({
-      id: "zoomIcon",
-      src: zoomIcon,
-      assetId: "zoomIcon",
-      type: "image",
-      preload: true
-    });
     //Getting numberf questions for assessment summary : testing purpose
     //instance.getSummary();//Testing
   },
@@ -199,7 +185,7 @@ org.ekstep.questionset.EditorPlugin = org.ekstep.contenteditor.basePlugin.extend
             id: UUID(),
             type: question.type,
             pluginId: instance._constants.v1PluginId,
-            pluginVer: (question.version === 1) ? '1.0' : question.version.toString(),
+            pluginVer: (question.version === 1) ? '1.1' : question.version.toString(),
             templateId: instance._constants.templateId,
             data: {
               __cdata: instance.createEcmlStructureV1(question)
@@ -344,6 +330,62 @@ org.ekstep.questionset.EditorPlugin = org.ekstep.contenteditor.basePlugin.extend
       });
     }
     return summary;
+  },
+  loadQSPlugins: function(){
+    var instance = this;
+    var qsManifest = org.ekstep.pluginframework.pluginManager.getPluginManifest(instance.manifest.id);
+    var qsVesrion = qsManifest.ver.split('.')[0];
+    var data = {
+      "request": {
+        "filters": {
+          "objectType": ["Content"],
+          "contentType": ["Plugin"],
+          "targets.id": instance.manifest.id,
+          "targets.ver": {'<=': Number(qsVesrion)},
+          "status": "Live"
+        },
+        "limit": 50,
+        "fields": ['contentType','semanticVersion','appIcon']
+      }
+    };
+
+    var pluginsData;
+    if(_.isFunction(ecEditor.getService('search').pluginsSearch)){
+      var url = ecEditor.getConfig('pluginsRepoUrl') ? ecEditor.getConfig('pluginsRepoUrl') : undefined; 
+      ecEditor.getService('search').pluginsSearch(url, data, function(err, resp) {
+       if(!err){ 
+          pluginsData = resp.data.result.content;
+          instance.pluginsRespHandler(pluginsData);
+       }
+      });
+    }else{
+      ecEditor.getService('search').search(data, function(err, resp) {
+       if(!err){ 
+          pluginsData = resp.data.result.content;
+          instance.pluginsRespHandler(pluginsData);
+       }
+     });
+    }
+  },
+  pluginsRespHandler: function(pluginsData){
+    var instance = this;
+    instance._plugins = pluginsData;
+    var plugins = [];
+    ecEditor._.forEach(pluginsData, function(value, key) { // eslint-disable-line no-unused-vars
+      if (value) {
+        var obj = {
+          "id": value.identifier,
+          "ver": value.semanticVersion,
+          "type": 'plugin'
+        }
+        plugins.push(obj);
+      }
+    });
+    org.ekstep.pluginframework.pluginManager.loadAllPlugins(_.isArray(plugins) ? plugins : [plugins], []);
+  },
+  getplugins: function(event, callback){
+    var instance = this;
+    callback(instance._plugins);
   }
 });
 //# sourceURL=questionsetPlugin.js

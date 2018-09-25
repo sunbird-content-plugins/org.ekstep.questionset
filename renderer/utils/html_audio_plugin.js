@@ -34,12 +34,24 @@ var HTMLAudioPlayer = {
     },
     togglePlay: function(url) {
         var audioIns = this.getInstance(url);
-        audioIns.paused ? audioIns.play() : audioIns.pause()
+        if(audioIns.paused){
+            this.pauseAll();
+            audioIns.play()
+        }else{
+            audioIns.pause()
+        }
     },
     stop: function(url) {
         var audioIns = this.getInstance(url);
         audioIns.pause();
         audioIns.currentTime = 0;
+    },
+    pauseAll: function() {
+        _.each(this._audios, function(audioIns){
+            if(!audioIns.paused){
+                audioIns.pause();
+            }
+        })
     }
 }
 
