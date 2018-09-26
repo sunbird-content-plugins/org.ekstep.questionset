@@ -200,7 +200,7 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
       QSFeedbackPopup.showGoodJob(); // eslint-disable-line no-undef
     } else {
       if (result.score > 0) {
-        var partialScoreRes = result.noOfCorrectAns + ' / ' + result.totalAns;
+        var partialScoreRes = result.score + ' / ' + result.max_score;
         QSFeedbackPopup.qsPartialCorrect(partialScoreRes); // eslint-disable-line no-undef
       }
       else {
