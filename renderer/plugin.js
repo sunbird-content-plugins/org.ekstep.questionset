@@ -200,6 +200,7 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
       QSFeedbackPopup.showGoodJob(); // eslint-disable-line no-undef
     } else {
       if (result.score > 0) {
+        result.score = parseFloat(result.score);
         var earnedScore;
         if((!isNaN(result.score) && result.score.toString().indexOf('.') != -1)){
           var precisionLen = this.precision(result.score);
