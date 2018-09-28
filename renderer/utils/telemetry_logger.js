@@ -31,7 +31,7 @@ QSTelemetryLogger.logResponse = function(data) {
   var edata = {
     "target": {
       "id": this._plugin._manifest.id ? this._plugin._manifest.id : "",
-      "ver": this._plugin._manifest.ver ? this._plugin._manifest.ver : "1.1",
+      "ver": this._plugin._manifest.ver ? this._plugin._manifest.ver : "1.0",
       "type": this._plugin._manifest.type ? this._plugin._manifest.type : "plugin"
     },
     "optionTag": data.type,
@@ -79,21 +79,25 @@ QSTelemetryLogger.logAssessEnd = function(result) {
   TelemetryService.assessEnd(this._assessStart, data);
 };
 QSTelemetryLogger.logEvent = function(type, data) {
-  switch (type.toUpperCase()) {
-    case this.EVENT_TYPES.TOUCH:
-      this.logInteract(data);
-      break;
-    case this.EVENT_TYPES.ASSESS:
-      this.logAssess();
-      break;
-    case this.EVENT_TYPES.RESPONSE:
-      this.logResponse(data);
-      break;
-    case this.EVENT_TYPES.ASSESSEND:
-      this.logAssessEnd(data);
-      break;
-    case 'DEFAULT':
-      return true;
+  try {
+    switch (type.toUpperCase()) {
+      case this.EVENT_TYPES.TOUCH:
+        this.logInteract(data);
+        break;
+      case this.EVENT_TYPES.ASSESS:
+        this.logAssess();
+        break;
+      case this.EVENT_TYPES.RESPONSE:
+        this.logResponse(data);
+        break;
+      case this.EVENT_TYPES.ASSESSEND:
+        this.logAssessEnd(data);
+        break;
+      case 'DEFAULT':
+        return true;
+    }
+  } catch (e) {
+    console.log("telemetry_logger -> logEvent()", e);
   }
 };
 //# sourceURL=telemetryLogger.js
