@@ -207,7 +207,14 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
       QSFeedbackPopup.showGoodJob(); // eslint-disable-line no-undef
     } else {
       if (result.score > 0) {
-        var partialScoreRes = parseFloat(result.score).toFixed(2) + '/' + result.max_score;
+        var earnedScore;
+        if((!isNaN(result.score) && result.score.toString().indexOf('.') != -1)){
+          var precisionLen = this.precision(result.score);
+          earnedScore = precisionLen > 1 ? result.score.toFixed(2) : result.score;
+        }else{
+          earnedScore = result.score;
+        }
+        var partialScoreRes = earnedScore + '/' + result.max_score;
         QSFeedbackPopup.qsPartialCorrect(partialScoreRes); // eslint-disable-line no-undef
       }
       else {
@@ -215,6 +222,12 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
       }
     }
     this._displayedPopup = true;
+  },
+  precision: function(a) {
+    if (!isFinite(a)) return 0;
+    var e = 1, p = 0;
+    while (Math.round(a * e) / e !== a) { e *= 10; p++; }
+    return p;
   },
   renderNextQuestion: function() {
     // Get the next question to be rendered
