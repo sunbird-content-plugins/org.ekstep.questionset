@@ -200,7 +200,6 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
       QSFeedbackPopup.showGoodJob(); // eslint-disable-line no-undef
     } else {
       if (result.score > 0) {
-        result.score = parseFloat(result.score);
         var earnedScore;
         if((!isNaN(result.score) && result.score.toString().indexOf('.') != -1)){
           var precisionLen = this.precision(result.score);
@@ -208,7 +207,7 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
         }else{
           earnedScore = result.score;
         }
-        var partialScoreRes = earnedScore + '/' + result.max_score;
+        var partialScoreRes = parseFloat(earnedScore) + '/' + result.max_score;
         QSFeedbackPopup.qsPartialCorrect(partialScoreRes); // eslint-disable-line no-undef
       }
       else {
