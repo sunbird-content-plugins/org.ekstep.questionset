@@ -104,25 +104,6 @@ org.ekstep.questionset.EditorPlugin = org.ekstep.contenteditor.basePlugin.extend
       instance.editorObj.scaleToWidth(props.w);
       instance.postInit();
     }, props);
-
-
-    //Add MCQ zoom and audio can to stage
-    var audioIcon = ecEditor.resolvePluginResource("org.ekstep.questionunit.mcq", "1.0", 'renderer/assets/audio-icon.png');
-    instance.addMedia({
-      id: "audioIcon",
-      src: audioIcon,
-      assetId: "audioIcon",
-      type: "image",
-      preload: true
-    });
-    var zoomIcon = ecEditor.resolvePluginResource("org.ekstep.questionunit.mcq", "1.0", 'renderer/assets/expand-icon.png');
-    instance.addMedia({
-      id: "zoomIcon",
-      src: zoomIcon,
-      assetId: "zoomIcon",
-      type: "image",
-      preload: true
-    });
     //Getting numberf questions for assessment summary : testing purpose
     //instance.getSummary();//Testing
   },
