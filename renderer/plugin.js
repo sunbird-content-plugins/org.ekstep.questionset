@@ -64,8 +64,7 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
 
     // De-Register for any existing navigation hooks (replay scenario)
     this.deregisterNavigation(instance);
-    // Register for navigation hooks
-    this.registerNavigation(instance);
+
     // On content replay, reset all question set information.
     EkstepRendererAPI.addEventListener('renderer:content:replay', function() {
       instance.resetQS();
@@ -86,6 +85,10 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
     // Load the DOM container that houses the unit templates
     this.loadTemplateContainer();
     this._questionSetConfig = this._data.config ? JSON.parse(this._data.config.__cdata) : this._questionSetConfig;
+    if(data.isQuestionPreview){
+      // get navigation plugin instance & empty all customNavigation object of it
+      org.ekstep.pluginframework.pluginManager.plugins['org.ekstep.navigation'].p.prototype._customNavigationPlugins=[]
+    }
     // this.setupNavigation();
     // Get all questions in the question set
     var quesArray = JSON.parse(JSON.stringify(data[this._constants.questionPluginId]));
@@ -110,6 +113,10 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
         EventBus.dispatch("renderer:previous:enable");
       }, 500);
     }
+
+    // Register for navigation hooks
+    this.registerNavigation(instance);
+
     this.saveQuestionSetState();
     // Render the question
     this.renderQuestion(question);
@@ -200,7 +207,14 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
       QSFeedbackPopup.showGoodJob(); // eslint-disable-line no-undef
     } else {
       if (result.score > 0) {
-        var partialScoreRes = result.noOfCorrectAns + ' / ' + result.totalAns;
+        var earnedScore;
+        if((!isNaN(result.score) && result.score.toString().indexOf('.') != -1)){
+          var precisionLen = this.precision(result.score);
+          earnedScore = precisionLen > 1 ? result.score.toFixed(2) : result.score;
+        }else{
+          earnedScore = result.score;
+        }
+        var partialScoreRes = parseFloat(earnedScore) + '/' + result.max_score;
         QSFeedbackPopup.qsPartialCorrect(partialScoreRes); // eslint-disable-line no-undef
       }
       else {
@@ -208,6 +222,12 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
       }
     }
     this._displayedPopup = true;
+  },
+  precision: function(a) {
+    if (!isFinite(a)) return 0;
+    var e = 1, p = 0;
+    while (Math.round(a * e) / e !== a) { e *= 10; p++; }
+    return p;
   },
   renderNextQuestion: function() {
     // Get the next question to be rendered
