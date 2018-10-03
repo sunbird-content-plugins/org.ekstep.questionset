@@ -64,8 +64,7 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
 
     // De-Register for any existing navigation hooks (replay scenario)
     this.deregisterNavigation(instance);
-    // Register for navigation hooks
-    this.registerNavigation(instance);
+
     // On content replay, reset all question set information.
     EkstepRendererAPI.addEventListener('renderer:content:replay', function() {
       instance.resetQS();
@@ -86,6 +85,10 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
     // Load the DOM container that houses the unit templates
     this.loadTemplateContainer();
     this._questionSetConfig = this._data.config ? JSON.parse(this._data.config.__cdata) : this._questionSetConfig;
+    if(data.isQuestionPreview){
+      // get navigation plugin instance & empty all customNavigation object of it
+      org.ekstep.pluginframework.pluginManager.plugins['org.ekstep.navigation'].p.prototype._customNavigationPlugins=[]
+    }
     // this.setupNavigation();
     // Get all questions in the question set
     var quesArray = JSON.parse(JSON.stringify(data[this._constants.questionPluginId]));
@@ -110,6 +113,10 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
         EventBus.dispatch("renderer:previous:enable");
       }, 500);
     }
+
+    // Register for navigation hooks
+    this.registerNavigation(instance);
+
     this.saveQuestionSetState();
     // Render the question
     this.renderQuestion(question);
@@ -207,7 +214,7 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
         }else{
           earnedScore = result.score;
         }
-        var partialScoreRes = earnedScore + '/' + result.max_score;
+        var partialScoreRes = parseFloat(earnedScore) + '/' + result.max_score;
         QSFeedbackPopup.qsPartialCorrect(partialScoreRes); // eslint-disable-line no-undef
       }
       else {
