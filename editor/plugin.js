@@ -311,7 +311,7 @@ org.ekstep.questionset.EditorPlugin = org.ekstep.contenteditor.basePlugin.extend
     var summary = {'totalQuestions': 0,'totalScore': 0, 'questions': []};
     var totalQuestionsToRender = instance.config.total_items;
     instance._questions.forEach(function(question,key) {
-      summary.questions.push(question.identifier);
+      summary.questions.push({'identifier': question.identifier});
     });
     if(instance.config.shuffle_questions){
       // Total number of items/questions to render
