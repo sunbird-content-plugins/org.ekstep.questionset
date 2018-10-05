@@ -99,7 +99,7 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
     this._renderedQuestions = [];
     var question = undefined;
     var savedQSState = this.getQuestionSetState();
-    if (savedQSState) {
+    if (savedQSState && savedQSState.currentQuestion && _.contains(this._masterQuestionSet, savedQSState.currentQuestion.id)) {
       this._renderedQuestions = savedQSState.renderedQuestions;
       question = savedQSState.currentQuestion;
       this._questionStates = savedQSState.questionStates;
@@ -109,9 +109,7 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
       question = this.getNextQuestion();
     }
     if(this._itemIndex > 0){
-      setTimeout(function() {
         EventBus.dispatch("renderer:previous:enable");
-      }, 500);
     }
 
     // Register for navigation hooks
@@ -136,9 +134,7 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
       this.setRendered(question);
       // Set current question for telmetry to log events from question-unit
       QSTelemetryLogger.setQuestion(instance._currentQuestion, instance.getRenderedIndex()+1); // eslint-disable-line no-undef
-      setTimeout(function() {
-        Renderer.update = true;
-      }, 500);
+      Renderer.update = true;
       // For V1 questions, invoke the 'questionset.quiz' plugin.
       // TODO: Move state saving of V1 questions from questionset.quiz to here, like V2 questions
       PluginManager.invoke(question.pluginId, question, this._stage, this._stage, this._theme);
@@ -361,9 +357,7 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
     var instance = this;
     Renderer.theme.setParam(this._data.id, undefined);
     this.removeDuplicateEventListeners('renderer:content:replay', instance._data.id);
-    setTimeout(function() {
-      instance.resetListeners();
-    }, 100);
+    instance.resetListeners();
   },
   resetListeners: function() {
     // The following code will unregister all event listeners added by the question unit plugins
@@ -419,4 +413,4 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
     });
   }
 });
-//# sourceURL=questionSetRenderer.js
+//# sourceURL=questionSetRenderer.jsourceURL=questionSetRenderer.js
