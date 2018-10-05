@@ -134,10 +134,10 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
       this.setRendered(question);
       // Set current question for telmetry to log events from question-unit
       QSTelemetryLogger.setQuestion(instance._currentQuestion, instance.getRenderedIndex()+1); // eslint-disable-line no-undef
-      Renderer.update = true;
       // For V1 questions, invoke the 'questionset.quiz' plugin.
       // TODO: Move state saving of V1 questions from questionset.quiz to here, like V2 questions
       PluginManager.invoke(question.pluginId, question, this._stage, this._stage, this._theme);
+      Renderer.update = true;
     } else {
       this.loadTemplateContainer();
       // For V2 questions, load the AngularJS template and controller and invoke the event to render the question
