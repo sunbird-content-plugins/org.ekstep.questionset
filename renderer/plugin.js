@@ -99,7 +99,8 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
     this._renderedQuestions = [];
     var question = undefined;
     var savedQSState = this.getQuestionSetState();
-    if (savedQSState && savedQSState.currentQuestion && _.contains(this._masterQuestionSet, savedQSState.currentQuestion.id)) {
+    var currentQState = this.questionExistInQS(savedQSState);
+    if (savedQSState && currentQState) {
       this._renderedQuestions = savedQSState.renderedQuestions;
       question = savedQSState.currentQuestion;
       this._questionStates = savedQSState.questionStates;
@@ -109,7 +110,9 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
       question = this.getNextQuestion();
     }
     if(this._itemIndex > 0){
+      setTimeout(function() {
         EventBus.dispatch("renderer:previous:enable");
+      }, 500);
     }
 
     // Register for navigation hooks
@@ -118,6 +121,14 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
     this.saveQuestionSetState();
     // Render the question
     this.renderQuestion(question);
+  },
+  questionExistInQS: function(savedQSState){
+    if(_.isUndefined(savedQSState)){
+      return false;
+    }else{
+     return _.any(savedQSState.masterQuestionSet, function(item){ return _.isEqual(item.id, savedQSState.currentQuestion.id); })
+    }
+
   },
   renderQuestion: function(question) {
     var instance = this;
