@@ -414,10 +414,10 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
     });
   },
   questionExistInQS: function(savedQSState){
-    if(_.isUndefined(savedQSState)){
+    if(savedQSState) {
+      return _.any(savedQSState.masterQuestionSet, function(item){ return _.isEqual(item.id, savedQSState.currentQuestion.id); })
+    } else {
       return false;
-    }else{
-     return _.any(savedQSState.masterQuestionSet, function(item){ return _.isEqual(item.id, savedQSState.currentQuestion.id); })
     }
    }
 });
