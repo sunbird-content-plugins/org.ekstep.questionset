@@ -76,12 +76,12 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
     }, instance);
     // Event handler to save question state
     EventBus.listeners['org.ekstep.questionset:saveQuestionState'] = undefined;
-    EkstepRendererAPI.addEventListener(instance._data.pluginType + ':saveQuestionState', function(event) {
+    /*EkstepRendererAPI.addEventListener(instance._data.pluginType + ':saveQuestionState', function(event) {
       var state = event.target;
       if (instance._currentQuestion) {
         instance.saveQuestionState(instance._currentQuestion.id, state);
       }
-    }, this);
+    }, this);*/
     // Load the DOM container that houses the unit templates
     this.loadTemplateContainer();
     this._questionSetConfig = this._data.config ? JSON.parse(this._data.config.__cdata) : this._questionSetConfig;
@@ -141,11 +141,12 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
       Renderer.update = true;
     } else {
       this.loadTemplateContainer();
+      // Mark the question as rendered
+      instance._currentQuestion = question;
       // For V2 questions, load the AngularJS template and controller and invoke the event to render the question
       // Fetch the question state if it was already rendered before
       this._currentQuestionState = this.getQuestionState(question.id);
-      // Mark the question as rendered
-      instance._currentQuestion = question;
+      
       // Set current question for telmetry to log events from question-unit
       this.setRendered(question);
       this.saveQuestionSetState();
@@ -184,6 +185,7 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
     var instance = this;
     if (!this._displayedPopup) {
       EkstepRendererAPI.dispatchEvent(this._currentQuestion.pluginId + ":evaluate", function(result) {
+        instance.saveQuestionState(instance._currentQuestion.id, result.state);
         if (instance._questionSetConfig.show_feedback == true) {
           // Display feedback popup (tryagain or goodjob)
           // result.pass is added to handle sorting-template(Custom IEvaluator) issue. This can be generic solution for other
