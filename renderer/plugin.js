@@ -99,7 +99,8 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
     this._renderedQuestions = [];
     var question = undefined;
     var savedQSState = this.getQuestionSetState();
-    if (savedQSState && savedQSState.currentQuestion && _.contains(this._masterQuestionSet, savedQSState.currentQuestion.id)) {
+    var savedCurrentQuestion = this.questionExistInQS(savedQSState);
+    if (savedQSState && savedCurrentQuestion) {
       this._renderedQuestions = savedQSState.renderedQuestions;
       question = savedQSState.currentQuestion;
       this._questionStates = savedQSState.questionStates;
@@ -411,6 +412,13 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
       }
       return true;
     });
-  }
+  },
+  questionExistInQS: function(savedQSState){
+    if(savedQSState) {
+      return _.any(savedQSState.masterQuestionSet, function(item){ return _.isEqual(item.id, savedQSState.currentQuestion.id); })
+    } else {
+      return false;
+    }
+   }
 });
 //# sourceURL=questionSetRenderer.js
