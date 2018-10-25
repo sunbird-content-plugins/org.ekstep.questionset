@@ -27,7 +27,7 @@ org.ekstep.questionset.EditorPlugin = org.ekstep.contenteditor.basePlugin.extend
 
     //Load dependecny plugin
     var publishedDate = new Date().getTime();
-    ecEditor.loadAndInitPlugin(instance._dependencyPlugin, "1.1", publishedDate);
+    ecEditor.loadAndInitPlugin(instance._dependencyPlugin, "1.0", publishedDate);
     //Loading question unit plugins(MCQ,FTB and MTF) which all having target id 'org.ekstep.questionset'
     this.loadQSPlugins();
     //Get loaded plugins
@@ -185,7 +185,7 @@ org.ekstep.questionset.EditorPlugin = org.ekstep.contenteditor.basePlugin.extend
             id: UUID(),
             type: question.type,
             pluginId: instance._constants.v1PluginId,
-            pluginVer: (question.version === 1) ? '1.1' : question.version.toString(),
+            pluginVer: (question.version === 1) ? '1.0' : question.version.toString(),
             templateId: instance._constants.templateId,
             data: {
               __cdata: instance.createEcmlStructureV1(question)
@@ -308,8 +308,11 @@ org.ekstep.questionset.EditorPlugin = org.ekstep.contenteditor.basePlugin.extend
   },
   getSummary: function() {
     var instance = this;
-    var summary = {'totalQuestions': 0,'totalScore': 0};
+    var summary = {'totalQuestions': 0,'totalScore': 0, 'questions': []};
     var totalQuestionsToRender = instance.config.total_items;
+    instance._questions.forEach(function(question,key) {
+      summary.questions.push({'identifier': question.identifier});
+    });
     if(instance.config.shuffle_questions){
       // Total number of items/questions to render
       summary.totalQuestions = totalQuestionsToRender;
