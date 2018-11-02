@@ -64,7 +64,7 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
 
     // De-Register for any existing navigation hooks (replay scenario)
     this.deregisterNavigation(instance);
-
+    EkstepRendererAPI.dispatchEvent("org.ekstep.questionunit:stopallaudio");
     // On content replay, reset all question set information.
     EkstepRendererAPI.addEventListener('renderer:content:replay', function () {
       instance.resetQS();
@@ -183,6 +183,7 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
   nextQuestion: function () {
     // Trigger the evaluation for the question
     var instance = this;
+    EkstepRendererAPI.dispatchEvent("org.ekstep.questionunit:stopallaudio");
     if (!this._displayedPopup) {
       EkstepRendererAPI.dispatchEvent(this._currentQuestion.pluginId + ":evaluate", function (result) {
         var oldState, newState;
@@ -210,8 +211,6 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
             instance.renderNextQuestion();
           }
         }
-
-
       }, this);
     } else {
       this._displayedPopup = false;
@@ -273,6 +272,7 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
   renderPrevQuestion: function () {
     // Get the previous question to be rendered
     var instance = this;
+    EkstepRendererAPI.dispatchEvent("org.ekstep.questionunit:stopallaudio");
     var prevQ = this.getPrevQuestion();
     if (prevQ) {
       this.renderQuestion(prevQ);
