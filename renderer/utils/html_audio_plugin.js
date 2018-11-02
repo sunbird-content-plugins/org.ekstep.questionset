@@ -1,24 +1,24 @@
 var HTMLAudioPlayer = {
-    _audios : {},
-    _audioLimit : 25,
-    removeOldest: function() { 
+    _audios: {},
+    _audioLimit: 25,
+    removeOldest: function () {
         //equvalent of _.sortBy(this._audios['lastUsed'])  and removes first one in _audios)
         var oldestAudio = Object.keys(this._audios)[0];
-        for(var audio in this._audios) {
-            if(this._audios[audio].lastUsed < this._audios[oldestAudio].lastUsed){
+        for (var audio in this._audios) {
+            if (this._audios[audio].lastUsed < this._audios[oldestAudio].lastUsed) {
                 oldestAudio = audio;
             }
         }
         delete this._audios[oldestAudio];
     },
-    getInstance: function(url, loop) {
-        if(!this._audios[url]) {
-            if(Object.keys(this._audios).length == this._audioLimit) {
+    getInstance: function (url, loop) {
+        if (!this._audios[url]) {
+            if (Object.keys(this._audios).length == this._audioLimit) {
                 this.removeOldest();
             }
             this._audios[url] = new Audio(url);
         }
-        if(typeof(loop) === "boolean")
+        if (typeof (loop) === "boolean")
             this._audios[url].loop = loop;
         this._audios[url].lastUsed = + new Date() //returns current timestamp
         return this._audios[url];
@@ -26,30 +26,41 @@ var HTMLAudioPlayer = {
     play: function (url) {
         this.getInstance(url, false).play();
     },
-    pause: function(url) {
+    pause: function (url) {
         this.getInstance(url).pause();
     },
-    loop: function(url) {
+    loop: function (url) {
         this.getInstance(url, true).play();
     },
-    togglePlay: function(url) {
+    togglePlay: function (url) {
         var audioIns = this.getInstance(url);
-        if(audioIns.paused){
+        if (audioIns.paused) {
             this.pauseAll();
             audioIns.play()
-        }else{
+        } else {
             audioIns.pause()
         }
     },
-    stop: function(url) {
+    stop: function (url) {
         var audioIns = this.getInstance(url);
         audioIns.pause();
         audioIns.currentTime = 0;
     },
-    pauseAll: function() {
-        _.each(this._audios, function(audioIns){
-            if(!audioIns.paused){
+    pauseAll: function () {
+        _.each(this._audios, function (audioIns) {
+            if (!audioIns.paused) {
                 audioIns.pause();
+            }
+        })
+    },
+    stopAll: function () {
+        _.each(this._audios, function (audioIns) {
+            if (!audioIns.paused) {
+                audioIns.pause();
+                audioIns.currentTime = 0;
+            }
+            else {
+                audioIns.currentTime = 0;
             }
         })
     }
