@@ -281,6 +281,10 @@ org.ekstep.questionset.EditorPlugin = org.ekstep.contenteditor.basePlugin.extend
               }
             });
             this.config.max_score = this._questions.length;
+            ecEditor.dispatchEvent("org.ekstep.toaster:info", {
+              title: 'Each question will carry equal weightage of 1 mark when using Shuffle. To provide different weightage to individual questions please turn off Shuffle.',
+              position: 'topCenter',
+            });
           }
           break;
         case 'show_feedback':
