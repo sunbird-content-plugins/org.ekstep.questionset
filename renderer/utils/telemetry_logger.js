@@ -41,15 +41,16 @@ QSTelemetryLogger.logResponse = function(data) {
 };
 QSTelemetryLogger.logAssess = function() {
   var instance = this;
+  var qsetConfig = EkstepRendererAPI.getPluginObjs("org.ekstep.questionset")._questionSetConfig;
   if (this._qData.questionnaire) {
     for (var quesIdentifier in this._qData.questionnaire.items) {
       if (this._qData.questionnaire.items.hasOwnProperty(quesIdentifier)) {
-        var maxscore = (JSON.parse(instance._data.config.__cdata).shuffle_questions) ? 1 : this._qData.questionnaire.items[quesIdentifier][0].max_score; 
+        var maxscore = (qsetConfig.shuffle_questions) ? 1 : this._qData.questionnaire.items[quesIdentifier][0].max_score; 
         this._assessStart = TelemetryService.assess(this._question.id, this._qData.questionnaire.items[quesIdentifier][0].language, this._qData.questionnaire.items[quesIdentifier][0].qlevel, { maxscore: maxscore  }).start();
       }
     }
   } else {
-    var maxscore = (JSON.parse(instance._data.config.__cdata).shuffle_questions) ? 1 : this._qConfig.metadata.max_score;
+    var maxscore =  (qsetConfig.shuffle_questions) ? 1 : this._qConfig.metadata.max_score;
     this._assessStart = TelemetryService.assess(this._question.id, this._qConfig.metadata.medium, this._qConfig.metadata.qlevel, { maxscore: maxscore }).start();
   }
 };
