@@ -272,6 +272,16 @@ org.ekstep.questionset.EditorPlugin = org.ekstep.contenteditor.basePlugin.extend
           break;
         case 'shuffle_questions':
           this.config.shuffle_questions = value;
+          if(value){
+            _.each(this._questions,function(val){
+              if(val.body == undefined){
+                val.max_score = 1;
+              }else{
+                JSON.parse(val.body).data.config.metadata.max_score = 1;
+              }
+            });
+            this.config.max_score = this._questions.length;
+          }
           break;
         case 'show_feedback':
           this.config.show_feedback = value;
