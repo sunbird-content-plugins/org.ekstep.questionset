@@ -282,6 +282,7 @@ org.ekstep.questionset.EditorPlugin = org.ekstep.contenteditor.basePlugin.extend
               }else{
                 var qBody = JSON.parse(instance.data[key].body);
                 qBody.data.config.metadata.max_score = 1;
+                qBody.data.config.max_score = 1;
                 instance.data[key].body = JSON.stringify(qBody);
                 instance.data[key].max_score = 1;
               }
