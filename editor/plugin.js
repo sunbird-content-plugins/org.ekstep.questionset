@@ -272,8 +272,10 @@ org.ekstep.questionset.EditorPlugin = org.ekstep.contenteditor.basePlugin.extend
           this.editorObj._objects[1]._objects[2].setText(value + "Marks");
           break;
         case 'shuffle_questions':
-          instance.config.shuffle_questions = value;
+          this.config.shuffle_questions = value;
           if(value){
+            var maxscore = this.config.shuffle_questions ? this._questions.length : this.config.max_score; 
+            this.editorObj._objects[1]._objects[2].setText(maxscore + " Marks");
             _.each(instance._questions,function(val,key){
               if(val.body == undefined){
                 instance._questions[key].max_score = 1;
@@ -282,7 +284,7 @@ org.ekstep.questionset.EditorPlugin = org.ekstep.contenteditor.basePlugin.extend
                 instance._questions[key].max_score = 1;
               }
             });
-            instance.config.max_score = instance._questions.length;
+            this.config.max_score = instance._questions.length;
             ecEditor.dispatchEvent("org.ekstep.toaster:info", {
               title: 'Each question will carry equal weightage of 1 mark when using Shuffle. To provide different weightage to individual questions please turn off Shuffle.',
               position: 'topCenter',

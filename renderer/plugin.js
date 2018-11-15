@@ -85,6 +85,7 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
     // Load the DOM container that houses the unit templates
     this.loadTemplateContainer();
     this._questionSetConfig = this._data.config ? JSON.parse(this._data.config.__cdata) : this._questionSetConfig;
+    QSTelemetryLogger.qsConfig = this._questionSetConfig;
     if(data.isQuestionPreview){
       // get navigation plugin instance & empty all customNavigation object of it
       org.ekstep.pluginframework.pluginManager.plugins['org.ekstep.navigation'].p.prototype._customNavigationPlugins=[]

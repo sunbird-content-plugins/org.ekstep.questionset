@@ -41,7 +41,7 @@ QSTelemetryLogger.logResponse = function(data) {
 };
 QSTelemetryLogger.logAssess = function() {
   var instance = this;
-  var qsetConfig = EkstepRendererAPI.getPluginObjs("org.ekstep.questionset")._questionSetConfig;
+  var qsetConfig = QSTelemetryLogger.qsConfig;
   if (this._qData.questionnaire) {
     for (var quesIdentifier in this._qData.questionnaire.items) {
       if (this._qData.questionnaire.items.hasOwnProperty(quesIdentifier)) {
