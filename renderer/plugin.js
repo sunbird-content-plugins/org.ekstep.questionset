@@ -85,6 +85,9 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
     // Load the DOM container that houses the unit templates
     this.loadTemplateContainer();
     this._questionSetConfig = this._data.config ? JSON.parse(this._data.config.__cdata) : this._questionSetConfig;
+    if(this._questionSetConfig.shuffle_questions){
+      this._questionSetConfig.max_score = this._questionSetConfig.total_items;
+    }
     QSTelemetryLogger.qsConfig = this._questionSetConfig;
     if(data.isQuestionPreview){
       // get navigation plugin instance & empty all customNavigation object of it
@@ -285,13 +288,27 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
       });
       // If shuffle is on, return a random question from the list of NOT rendered questions
       if (this._questionSetConfig.shuffle_questions) {
-        return _.sample(unRenderedQuestions);
+        var ques = _.sample(unRenderedQuestions);
+        ques = this.updateMaxScore(this._questionSetConfig.shuffle_questions, ques);
+        return ques;
       }
       // If shuffle is off, return the next question in the list
       return unRenderedQuestions.shift();
     } else {
       // If the next question has already been rendered, fetch it from the _renderedQuestions array
       return this._renderedQuestions[renderIndex + 1];
+    }
+  },
+  updateMaxScore: function(shuffle, question){
+    // Update max-score of the question, when shuffle on
+    if(shuffle){
+      questionConfigData  = JSON.parse(question.config.__cdata);
+      questionConfigData.max_score = 1;
+      questionConfigData.metadata.max_score = 1;
+      question.config.__cdata = JSON.stringify(questionConfigData);
+      return question;
+    } else {
+      return question;
     }
   },
   getPrevQuestion: function() {
