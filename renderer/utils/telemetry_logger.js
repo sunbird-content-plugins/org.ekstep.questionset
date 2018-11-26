@@ -40,14 +40,18 @@ QSTelemetryLogger.logResponse = function(data) {
   TelemetryService.itemResponse(edata);
 };
 QSTelemetryLogger.logAssess = function() {
+  var instance = this;
+  var qsetConfig = QSTelemetryLogger.qsConfig;
   if (this._qData.questionnaire) {
     for (var quesIdentifier in this._qData.questionnaire.items) {
       if (this._qData.questionnaire.items.hasOwnProperty(quesIdentifier)) {
-        this._assessStart = TelemetryService.assess(this._question.id, this._qData.questionnaire.items[quesIdentifier][0].language, this._qData.questionnaire.items[quesIdentifier][0].qlevel, { maxscore: this._qData.questionnaire.items[quesIdentifier][0].max_score }).start();
+        var maxscore = (qsetConfig.shuffle_questions) ? 1 : this._qData.questionnaire.items[quesIdentifier][0].max_score; 
+        this._assessStart = TelemetryService.assess(this._question.id, this._qData.questionnaire.items[quesIdentifier][0].language, this._qData.questionnaire.items[quesIdentifier][0].qlevel, { maxscore: maxscore  }).start();
       }
     }
   } else {
-    this._assessStart = TelemetryService.assess(this._question.id, this._qConfig.metadata.medium, this._qConfig.metadata.qlevel, { maxscore: this._qConfig.metadata.max_score }).start();
+    var maxscore =  (qsetConfig.shuffle_questions) ? 1 : this._qConfig.metadata.max_score;
+    this._assessStart = TelemetryService.assess(this._question.id, this._qConfig.metadata.medium, this._qConfig.metadata.qlevel, { maxscore: maxscore }).start();
   }
 };
 QSTelemetryLogger.logAssessEnd = function(result) {
