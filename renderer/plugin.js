@@ -302,10 +302,20 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
   updateMaxScore: function(shuffle, question){
     // Update max-score of the question, when shuffle on
     if(shuffle){
+      // check for version 2 question
       questionConfigData  = JSON.parse(question.config.__cdata);
-      questionConfigData.max_score = 1;
-      questionConfigData.metadata.max_score = 1;
-      question.config.__cdata = JSON.stringify(questionConfigData);
+      questionData = JSON.parse(question.data.__cdata);
+      //metadata property exists only for v2 quesions
+      if(questionConfigData.metadata){ //checks the question is v2
+        questionConfigData.max_score = 1;
+        questionConfigData.metadata.max_score = 1;
+        question.config.__cdata = JSON.stringify(questionConfigData);
+      } else { // checks the question is v1
+        _.each(questionData.questionnaire.item_sets, function(iSet){
+          questionData.questionnaire.items[iSet.id][0].max_score = 1;
+          question.data.__cdata = JSON.stringify(questionData);
+        })
+      }
       return question;
     } else {
       return question;
