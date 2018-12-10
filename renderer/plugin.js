@@ -302,7 +302,9 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
       });
       // If shuffle is on, return a random question from the list of NOT rendered questions
       if (this._questionSetConfig.shuffle_questions) {
-        return _.sample(unRenderedQuestions);
+        var ques = _.sample(unRenderedQuestions);
+        ques = this.updateMaxScore(this._questionSetConfig.shuffle_questions, ques);
+        return ques;
       }
       // If shuffle is off, return the next question in the list
       return unRenderedQuestions.shift();
@@ -310,6 +312,24 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
       // If the next question has already been rendered, fetch it from the _renderedQuestions array
       return this._renderedQuestions[renderIndex + 1];
     }
+  },
+  updateMaxScore: function (shuffle, question) {
+    // Update max-score of the question, when shuffle on
+    if (shuffle) {
+      questionConfigData = JSON.parse(question.config.__cdata);
+      questionData = JSON.parse(question.data.__cdata);
+      if (questionConfigData.metadata) { //checks the question is v2 ( metadata property exists only for v2 quesions)
+        questionConfigData.max_score = 1;
+        questionConfigData.metadata.max_score = 1;
+        question.config.__cdata = JSON.stringify(questionConfigData);
+      } else { // handling v1 question
+        _.each(questionData.questionnaire.item_sets, function (iSet) {
+          questionData.questionnaire.items[iSet.id][0].max_score = 1;
+          question.data.__cdata = JSON.stringify(questionData);
+        })
+      }
+    }
+    return question;
   },
   getPrevQuestion: function () {
     // The previous question is always obtained from the _renderedQuestions array.
