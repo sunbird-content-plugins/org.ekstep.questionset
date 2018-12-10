@@ -27,6 +27,9 @@
         "type": "plugin",
         "plugin": "org.ekstep.questionset.preview",
         "ver": "1.0"
+      },{
+        "type":"css",
+        "src":"editor/style/style.css"
       }
     ],
     "menu": [
