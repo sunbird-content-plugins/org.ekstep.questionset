@@ -183,19 +183,20 @@ org.ekstep.questionsetRenderer = IteratorPlugin.extend({ // eslint-disable-line 
   nextQuestion: function () {
     // Trigger the evaluation for the question
     var instance = this;
+    var questionState = instance.getQuestionState(instance._currentQuestion.id)
     if (!this._displayedPopup) {
       EkstepRendererAPI.dispatchEvent(this._currentQuestion.pluginId + ":evaluate", function (result) {
         var oldState, newState;
-        if (!_.isUndefined(instance._currentQuestionState)) {
+        if (!_.isUndefined(questionState)) {
           if (typeof (result.state.val) == "object") {
-            oldState = JSON.stringify(instance._currentQuestionState.val)
+            oldState = JSON.stringify(questionState.val)
             newState = JSON.stringify(result.state.val)
           } else {
-            oldState = instance._currentQuestionState.val;
+            oldState = questionState.val;
             newState = result.state.val;
           }
         }
-        if (!_.isUndefined(instance._currentQuestionState) && oldState == newState) {
+        if (!_.isUndefined(questionState) && oldState == newState) {
           instance.renderNextQuestion();
         } else {
           instance.saveQuestionState(instance._currentQuestion.id, result.state);
